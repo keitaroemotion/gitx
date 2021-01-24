@@ -18,22 +18,20 @@ fn main() {
                      validate_args(&args, 4);
                      if let result = gitx::add_alias(&args[2], &args[3]) {
                          match result {
-                            Err(e) => { println!("\n{}\n", e);
-                                        process::exit(1);
-                                      },
-                            _      => { () }
+                             Err(e) => { println!("\n{}\n", e);
+                                         process::exit(1);
+                                       },
+                             _      => { () }
                          }
                      }
                  },
         "run" => { 
                      validate_args(&args, 4);
                      if let e = gitx::operate_with_alias() {
-
                      }
                  },
         _     => {
                      if let e = gitx::show_branches_with_aliases() {
-
                      }
                  }
     }
