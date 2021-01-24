@@ -3,22 +3,23 @@ use std::io::{self, BufRead};
 use std::path::Path;
 use std::io::prelude::*;
 
-pub fn read_alias() {
-    let condfig_file = ".git/alias";
+const config_file:&'static str = ".git/alias";
 
-    if let Ok(lines) = read_lines(condfig_file) {
+pub fn read_alias() {
+
+    if let Ok(lines) = read_lines(config_file) {
         for line in lines {
             if let Ok(ip) = line {
                 println!("{}", ip);
             }
         }
     } else {
-        create_file(condfig_file)
+        create_config_file()
     }
 }
 
-pub fn create_file(condfig_file: &str) {
-    let path    = Path::new(condfig_file);
+pub fn create_config_file() {
+    let path    = Path::new(config_file);
     let display = path.display();
     let mut file = match File::create(&path) {
         Err(why) => panic!("couldn't create {}: {}", display, why),
