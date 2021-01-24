@@ -5,16 +5,30 @@ use std::io::prelude::*;
 
 const config_file:&'static str = ".git/alias";
 
-pub fn read_alias() {
+pub struct Alias {
+    key:   String,
+    value: String
+}
+
+impl Alias {
+    fn new(line: &str) -> Alias {
+        let mut lsp: Vec<&str> = line.split(" ").collect();
+        Alias { key: lsp[0].to_string(), value: lsp[1].to_string() }
+    }
+}
+
+pub fn read_alias() -> Vec<Alias> {
+    let mut aliases: Vec<Alias> = Vec::new();
     if let Ok(lines) = read_lines(config_file) {
         for line in lines {
-            if let Ok(ip) = line {
-                println!("{}", ip);
+            if let Ok(x) = line {
+                aliases.push(Alias::new(&x[..]));
             }
         }
     } else {
         create_config_file()
     }
+    aliases
 }
 
 pub fn create_config_file() {
@@ -40,9 +54,23 @@ where P: AsRef<Path>, {
 //
 // add <branch-name> <alias>
 //
-pub fn add_alias(branch_name: &str, alias: &str) {
-    println!("{}, {}", branch_name, alias);
-    read_alias();
+pub fn add_alias(branch_name: &str, alias: &str) -> Result<String, String> {
+    println!("branch name: {}, alias: {}", branch_name, alias);
+    let alias       = read_alias(); // rather than alias struct, maybe it should be Hash
+    let mut matches = 0;
+    for x in alias {
+        if x.key == branch_name {
+            matches = 1;
+            break;
+        }
+    }
+
+    // add 
+
+    match matches {
+        0 => Ok ("successfully added".to_string()),
+        _ => Err("error".to_string()),
+    }
 }
 
 //

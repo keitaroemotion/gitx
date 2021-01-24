@@ -16,14 +16,25 @@ fn main() {
     match &args[1][..] {
         "add" => {
                      validate_args(&args, 4);
-                     gitx::add_alias(&args[2], &args[3])
+                     if let result = gitx::add_alias(&args[2], &args[3]) {
+                         match result {
+                            Err(e) => { println!("\n{}\n", e);
+                                        process::exit(1);
+                                      },
+                            _      => { () }
+                         }
+                     }
                  },
         "run" => { 
                      validate_args(&args, 4);
-                     gitx::operate_with_alias();
+                     if let e = gitx::operate_with_alias() {
+
+                     }
                  },
         _     => {
-                     gitx::show_branches_with_aliases();
+                     if let e = gitx::show_branches_with_aliases() {
+
+                     }
                  }
     }
 }
