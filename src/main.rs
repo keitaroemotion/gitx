@@ -12,27 +12,19 @@ fn main() {
     // 3. git operation with alias
 
     let args: Vec<String> = env::args().collect();
+    validate_args_first(&args, 2);
 
     match &args[1][..] {
         "add" => {
                      validate_args(&args, 4);
-                     if let result = gitx::add_alias(&args[2], &args[3]) {
-                         match result {
-                             Err(e) => { println!("\n{}\n", e);
-                                         process::exit(1);
-                                       },
-                             _      => { () }
-                         }
-                     }
+                     gitx::add_alias(&args[2], &args[3]);
                  },
         "run" => { 
                      validate_args(&args, 4);
-                     if let e = gitx::operate_with_alias() {
-                     }
+                     gitx::operate_with_alias();
                  },
         _     => {
-                     if let e = gitx::show_branches_with_aliases() {
-                     }
+                     gitx::show_branches_with_aliases();
                  }
     }
 }
@@ -42,4 +34,18 @@ fn validate_args(args: &Vec<String>, len: usize) {
        println!("\nArgument missing. (it should be at least {}.)\n", len);
        process::exit(1);
     }
+}
+
+fn validate_args_first(args: &Vec<String>, len: usize) {
+    if args.len() < len {
+        show_help();
+    }
+}
+
+fn show_help() {
+       println!("\n\
+
+gitx add [branch name] [alias name] ... add alias to the branch 
+       ");
+       process::exit(1);
 }

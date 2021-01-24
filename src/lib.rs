@@ -1,9 +1,11 @@
 use std::fs::File;
+use std::fs::OpenOptions;
+use std::io::Write;
 use std::io::{self, BufRead};
 use std::path::Path;
-use std::io::prelude::*;
+use std::process;
 
-const config_file:&'static str = ".git/alias";
+const CONFIG_FILE:&'static str = ".git/alias";
 
 pub struct Alias {
     key:   String,
@@ -19,7 +21,7 @@ impl Alias {
 
 pub fn read_alias() -> Vec<Alias> {
     let mut aliases: Vec<Alias> = Vec::new();
-    if let Ok(lines) = read_lines(config_file) {
+    if let Ok(lines) = read_lines(CONFIG_FILE) {
         for line in lines {
             if let Ok(x) = line {
                 aliases.push(Alias::new(&x[..]));
@@ -32,7 +34,7 @@ pub fn read_alias() -> Vec<Alias> {
 }
 
 pub fn create_config_file() {
-    let path    = Path::new(config_file);
+    let path    = Path::new(CONFIG_FILE);
     let display = path.display();
     let mut file = match File::create(&path) {
         Err(why) => panic!("couldn't create {}: {}", display, why),
@@ -54,23 +56,22 @@ where P: AsRef<Path>, {
 //
 // add <branch-name> <alias>
 //
-pub fn add_alias(branch_name: &str, alias: &str) -> Result<String, String> {
-    println!("branch name: {}, alias: {}", branch_name, alias);
-    let alias       = read_alias(); // rather than alias struct, maybe it should be Hash
-    let mut matches = 0;
+pub fn add_alias(branch_name: &str, alias_name: &str) {
+    let alias = read_alias(); // rather than alias struct, maybe it should be Hash
     for x in alias {
         if x.key == branch_name {
-            matches = 1;
-            break;
+            println!("it is already in the alias file");
+            process::exit(1);
         }
     }
 
-    // add 
-
-    match matches {
-        0 => Ok ("successfully added".to_string()),
-        _ => Err("error".to_string()),
-    }
+    let mut file = OpenOptions::new().append(true)
+                                     .open  (CONFIG_FILE)
+                                     .expect("cannot open file");
+   
+    let x = format!("{} {}\n", branch_name, alias_name);
+    file.write_all(x.as_bytes()).expect("write failed");
+    println!("added | branch name: {}, alias: {}", branch_name, alias_name);
 }
 
 //
