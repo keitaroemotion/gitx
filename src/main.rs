@@ -13,14 +13,24 @@ fn main() {
 
     let args: Vec<String> = env::args().collect();
 
-    if args.len() < 1 {
-       println!("\nargument missing.\n");
-       process::exit(1);
-    }
-
     match &args[1][..] {
-        "add" => gitx::add_alias(),
-        "run" => gitx::operate_with_alias(),
-        _     => gitx::show_branches_with_aliases()
+        "add" => {
+                     validate_args(&args, 4);
+                     gitx::add_alias(&args[2], &args[3])
+                 },
+        "run" => { 
+                     validate_args(&args, 4);
+                     gitx::operate_with_alias();
+                 },
+        _     => {
+                     gitx::show_branches_with_aliases();
+                 }
+    }
+}
+
+fn validate_args(args: &Vec<String>, len: usize) {
+    if args.len() < len {
+       println!("\nArgument missing. (it should be at least {}.)\n", len);
+       process::exit(1);
     }
 }

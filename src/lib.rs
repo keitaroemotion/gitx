@@ -6,7 +6,6 @@ use std::io::prelude::*;
 const config_file:&'static str = ".git/alias";
 
 pub fn read_alias() {
-
     if let Ok(lines) = read_lines(config_file) {
         for line in lines {
             if let Ok(ip) = line {
@@ -41,7 +40,8 @@ where P: AsRef<Path>, {
 //
 // add <branch-name> <alias>
 //
-pub fn add_alias() {
+pub fn add_alias(branch_name: &str, alias: &str) {
+    println!("{}, {}", branch_name, alias);
     read_alias();
 }
 
